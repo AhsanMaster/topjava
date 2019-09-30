@@ -23,7 +23,7 @@ public class UserMealsUtil {
         );
         List<UserMealWithExceed> list = getFilteredWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         List<UserMealWithExceed> list1 = getFilteredWithExceededStream(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
-
+        List<UserMealWithExceed> list2 = getFilteredWithExceededStreamBonus(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
     }
 
     public static List<UserMealWithExceed> getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
@@ -31,7 +31,7 @@ public class UserMealsUtil {
         for (UserMeal userMeal : mealList) {
             LocalDate date = userMeal.getDateTime().toLocalDate();
             Integer sum = mapCaloriesPerDate.getOrDefault(date, 0) + userMeal.getCalories();
-            mapCaloriesPerDate.merge(date, userMeal.getCalories(), (a, b) -> a + b);
+            mapCaloriesPerDate.merge(date, userMeal.getCalories(), Integer ::sum);
         }
         List<UserMealWithExceed> result = new ArrayList<>();
         for (UserMeal userMeal : mealList) {
@@ -53,5 +53,15 @@ public class UserMealsUtil {
                 .filter(userMeal -> TimeUtil.isBetween(userMeal.getLocalTime(), startTime, endTime))
                 .map(userMeal -> new UserMealWithExceed(userMeal, mapCaloriesPerDate.get(userMeal.getLocalDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
+    }
+
+    public static List<UserMealWithExceed> getFilteredWithExceededStreamBonus(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+        return mealList.stream().collect(Collectors.groupingBy(UserMeal::getLocalDate)).values()
+                .stream()
+                .flatMap(userMealPerDate -> {
+                    boolean exceed = userMealPerDate.stream().mapToInt(UserMeal::getCalories).sum() > caloriesPerDay;
+                    return userMealPerDate.stream().filter(userMeal -> TimeUtil.isBetween(userMeal.getLocalTime(), startTime, endTime))
+                            .map(userMeal -> new UserMealWithExceed(userMeal, exceed));
+                }).collect(Collectors.toList());
     }
 }
