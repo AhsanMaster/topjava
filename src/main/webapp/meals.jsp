@@ -17,6 +17,25 @@
     </style>
 </head>
 <body>
+<form method="get" action="meals">
+    <input type="hidden" name="action" value="filter">
+
+    <label for="startDate">Start date</label>
+    <input type="date" name="startDate" id="startDate">
+
+    <label for="endDate">End date</label>
+    <input type="date" name="endDate" id="endDate">
+
+    <label for="startTime">Start time</label>
+    <input type="time" name="startTime" id="startTime">
+
+    <label for="endTime">End time</label>
+    <input type="time" name="endTime" id="endTime">
+
+    <button type="submit">Filter</button>
+</form>
+
+
 <section>
     <h3><a href="index.html">Home</a></h3>
     <hr/>
