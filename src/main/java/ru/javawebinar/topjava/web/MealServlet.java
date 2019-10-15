@@ -86,7 +86,7 @@ public class MealServlet extends HttpServlet {
                 String endTime = request.getParameter("endTime");
 
                 log.info("getFiltered");
-                request.setAttribute("meals", mealRestController.getAll(
+                request.setAttribute("meals", mealRestController.getAllFiltred(
                         startDate.isEmpty() ? null : LocalDate.parse(startDate),
                         endDate.isEmpty() ? null : LocalDate.parse(endDate),
                         startTime.isEmpty() ? null : LocalTime.parse(startTime),
