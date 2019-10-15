@@ -25,17 +25,20 @@ public class MealRestController {
     @Autowired
     private MealService service;
 
-    public List<MealTo> getAll(){
-        return getAll(null,null,null,null);
-    }
+
     public List<MealTo> getAll(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        log.info("getAll");
+        log.info("get all filtered by user {}", authUserId());
         List<Meal> meals =  service.getAll(authUserId(),
                 startDate == null ? LocalDate.MIN : startDate,
                 endDate == null ? LocalDate.MAX : endDate,
                 startTime == null ? LocalTime.MIN : startTime,
                 endTime == null ? LocalTime.MAX : endTime);
         return MealsUtil.getTos(meals,MealsUtil.DEFAULT_CALORIES_PER_DAY);
+    }
+
+    public List<MealTo> getAll(){
+        log.info("get all by user {}",authUserId());
+        return MealsUtil.getTos(service.getAll(authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
     public Meal get(int id) {

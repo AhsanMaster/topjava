@@ -18,4 +18,6 @@ public interface MealRepository {
     Meal get(int id, int userId);
 
     List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
+
+    List<Meal> getAll(int userId);
 }

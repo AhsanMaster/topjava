@@ -41,6 +41,10 @@ public class MealService {
         return repository.getAll(userId, startDate, endDate, startTime, endTime);
     }
 
+    public List<Meal> getAll(int userId){
+        return repository.getAll(userId);
+    }
+
     public void update(Meal meal, int userId) throws NotFoundException {
         checkNotFoundWithId(repository.save(meal, userId), meal.getId());
     }
