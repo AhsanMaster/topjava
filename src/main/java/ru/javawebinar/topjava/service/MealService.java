@@ -16,10 +16,10 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 @Service
 public class MealService {
 
-    private  MealRepository repository;
+    private MealRepository repository;
 
     @Autowired
-    public MealService(MealRepository repository){
+    public MealService(MealRepository repository) {
         this.repository = repository;
     }
 
@@ -39,7 +39,7 @@ public class MealService {
         return repository.getAllFiltered(userId, startDate, endDate, startTime, endTime);
     }
 
-    public List<Meal> getAll(int userId){
+    public List<Meal> getAll(int userId) {
         return repository.getAll(userId);
     }
 

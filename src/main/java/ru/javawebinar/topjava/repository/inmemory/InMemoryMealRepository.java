@@ -31,7 +31,7 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal save(Meal meal, int userId) {
         Map<Integer, Meal> userMeals = getMapUserMeals(userId);
-        if(userMeals == null){
+        if (userMeals == null) {
             putMapUserMeals(userId);
             userMeals = getMapUserMeals(userId);
         }
@@ -84,9 +84,10 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     private Map<Integer, Meal> getMapUserMeals(int userId) { //можно было бы просто сразу через get, но вдруг структура поменяется
-         return repository.get(userId);
+        return repository.get(userId);
     }
-    private void putMapUserMeals(int userId){
+
+    private void putMapUserMeals(int userId) {
         repository.putIfAbsent(userId, new HashMap<>());
     }
 }

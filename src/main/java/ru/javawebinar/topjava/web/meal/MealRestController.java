@@ -28,19 +28,19 @@ public class MealRestController {
 
     public List<MealTo> getAllFiltred(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("get all filtered by user {}", authUserId());
-        List<Meal> meals =  service.getAllFiltered(authUserId(),
+        List<Meal> meals = service.getAllFiltered(authUserId(),
                 startDate == null ? LocalDate.MIN : startDate,
                 endDate == null ? LocalDate.MAX : endDate,
                 LocalTime.MIN,
-                LocalTime.MAX );
+                LocalTime.MAX);
         return MealsUtil.getFilteredTos(meals,
                 MealsUtil.DEFAULT_CALORIES_PER_DAY,
                 startTime == null ? LocalTime.MIN : startTime,
                 endTime == null ? LocalTime.MAX : endTime);
     }
 
-    public List<MealTo> getAll(){
-        log.info("get all by user {}",authUserId());
+    public List<MealTo> getAll() {
+        log.info("get all by user {}", authUserId());
         return MealsUtil.getTos(service.getAll(authUserId()), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
@@ -52,7 +52,7 @@ public class MealRestController {
     public Meal create(Meal meal) {
         log.info("create {}", meal);
         checkNew(meal);
-        return service.create(meal,authUserId());
+        return service.create(meal, authUserId());
     }
 
     public void delete(int id) {
