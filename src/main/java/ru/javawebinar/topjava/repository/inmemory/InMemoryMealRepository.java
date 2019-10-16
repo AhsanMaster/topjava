@@ -20,7 +20,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Repository
 public class InMemoryMealRepository implements MealRepository {
     private static final Logger log = getLogger(InMemoryMealRepository.class);
-    private Map<Integer, HashMap<Integer, Meal>> repository = new ConcurrentHashMap<>();
+    private Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
@@ -53,12 +53,12 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         return getMapUserMeals(userId).values()
                 .stream()
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .filter(meal -> DateTimeUtil.isBetween(meal.getDate(), startDate, endDate))
                 .filter(meal -> DateTimeUtil.isBetween(meal.getTime(), startTime, endTime))
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 

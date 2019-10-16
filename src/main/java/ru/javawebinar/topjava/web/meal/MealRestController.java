@@ -28,7 +28,7 @@ public class MealRestController {
 
     public List<MealTo> getAllFiltred(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("get all filtered by user {}", authUserId());
-        List<Meal> meals =  service.getAll(authUserId(),
+        List<Meal> meals =  service.getAllFiltered(authUserId(),
                 startDate == null ? LocalDate.MIN : startDate,
                 endDate == null ? LocalDate.MAX : endDate,
                 startTime == null ? LocalTime.MIN : startTime,
