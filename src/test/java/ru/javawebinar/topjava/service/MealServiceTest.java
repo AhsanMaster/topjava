@@ -36,26 +36,26 @@ public class MealServiceTest {
 
     @Test
     public void get() {
-        Meal meal = service.get(ID_MEAL_1,USER_ID);
-        assertMatch(meal,MEAL_1);
+        Meal meal = service.get(ID_MEAL_1, USER_ID);
+        assertMatch(meal, MEAL_1);
     }
 
     @Test
     public void delete() {
-        service.delete(ID_MEAL_7,ADMIN_ID);
-        assertMatch(service.getAll(ADMIN_ID), Arrays.asList(MEAL_8));
+        service.delete(ID_MEAL_7, ADMIN_ID);
+        assertMatch(service.getAll(ADMIN_ID), MEAL_8);
     }
 
     @Test
     public void getBetweenDates() {
-        List<Meal> meals = service.getBetweenDates(MEAL_1.getDate(),MEAL_3.getDate(),USER_ID);
-        assertMatch(meals,Arrays.asList(MEAL_3,MEAL_2,MEAL_1));
+        List<Meal> meals = service.getBetweenDates(MEAL_1.getDate(), MEAL_3.getDate(), USER_ID);
+        assertMatch(meals, MEAL_3, MEAL_2, MEAL_1);
     }
 
     @Test
     public void getAll() {
-        List<Meal> meals= service.getAll(USER_ID);
-        assertMatch(meals,USER_MEALS);
+        List<Meal> meals = service.getAll(USER_ID);
+        assertMatch(meals, USER_MEALS);
     }
 
     @Test
@@ -63,29 +63,30 @@ public class MealServiceTest {
         Meal updated = new Meal(MEAL_1);
         updated.setDescription("updated");
         updated.setCalories(777);
-        service.update(updated,USER_ID);
-        assertMatch(service.get(ID_MEAL_1,USER_ID),updated);
+        service.update(updated, USER_ID);
+        assertMatch(service.get(ID_MEAL_1, USER_ID), updated);
     }
 
     @Test
     public void create() {
-        Meal newMeal = new Meal(null, LocalDateTime.of(2019, Month.OCTOBER,22,10,0),"тест еда",500);
-        service.create(newMeal,ADMIN_ID);
-        assertMatch(service.getAll(ADMIN_ID),Arrays.asList(newMeal,MEAL_8,MEAL_7));
+        Meal newMeal = new Meal( LocalDateTime.of(2019, Month.OCTOBER, 22, 10, 0), "тест еда", 500);
+        Meal createdMeal = service.create(newMeal, ADMIN_ID);
+        newMeal.setId(createdMeal.getId());
+        assertMatch(service.getAll(ADMIN_ID), newMeal, MEAL_8, MEAL_7);
     }
 
     @Test(expected = NotFoundException.class)
-    public void getNotFound(){
-        service.get(ID_MEAL_1,ADMIN_ID);
+    public void getNotFound() {
+        service.get(ID_MEAL_1, ADMIN_ID);
     }
 
     @Test(expected = NotFoundException.class)
-    public void deleteNotFound(){
-        service.delete(ID_MEAL_1,ADMIN_ID);
+    public void deleteNotFound() {
+        service.delete(ID_MEAL_1, ADMIN_ID);
     }
 
     @Test(expected = NotFoundException.class)
-    public void updateNotFound(){
-        service.update(MEAL_1,ADMIN_ID);
+    public void updateNotFound() {
+        service.update(MEAL_1, ADMIN_ID);
     }
 }
