@@ -5,6 +5,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
@@ -12,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import java.sql.SQLDataException;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-app-base.xml",
         "classpath:spring/spring-db.xml"
 })
 @RunWith(SpringRunner.class)
@@ -72,7 +75,7 @@ public class MealServiceTest {
         Meal newMeal = new Meal(LocalDateTime.of(2019, Month.OCTOBER, 22, 10, 0), "тест еда", 500);
         Meal createdMeal = service.create(newMeal, ADMIN_ID);
         newMeal.setId(createdMeal.getId());
-        assertMatch(service.getAll(ADMIN_ID), newMeal, MEAL_8, MEAL_7);
+        assertMatch(newMeal,createdMeal);
     }
 
     @Test(expected = NotFoundException.class)
@@ -88,5 +91,13 @@ public class MealServiceTest {
     @Test(expected = NotFoundException.class)
     public void updateNotFound() {
         service.update(MEAL_1, ADMIN_ID);
+    }
+
+    @Test(expected = DuplicateKeyException.class)
+    public void duplicatedMealCreate(){
+        Meal newMeal1 = new Meal(LocalDateTime.of(2019, Month.OCTOBER, 22, 10, 0), "тест еда", 500);
+        Meal newMeal2= new Meal(LocalDateTime.of(2019, Month.OCTOBER, 22, 10, 0), "тест еда 2", 1500);
+        service.create(newMeal1, ADMIN_ID);
+        service.create(newMeal2, ADMIN_ID);
     }
 }
