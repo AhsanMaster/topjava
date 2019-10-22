@@ -27,23 +27,23 @@ public class JdbcMealRepository implements MealRepository {
         this.jdbcTemplate = jdbcTemplate;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
-        .withTableName("meals")
-        .usingGeneratedKeyColumns("id");
+                .withTableName("meals")
+                .usingGeneratedKeyColumns("id");
     }
 
     @Override
     public Meal save(Meal meal, int userId) {
         MapSqlParameterSource map = new MapSqlParameterSource()
-                .addValue("id",meal.getId())
-                .addValue("user_id", userId)
-                .addValue("description",meal.getDescription())
-                .addValue("date_time",meal.getId())
-                .addValue("calories",meal.getCalories());
-        if(meal.isNew()){
+                .addValue("id", meal.getId())
+                .addValue("userId", userId)
+                .addValue("description", meal.getDescription())
+                .addValue("dateTime", meal.getDateTime())
+                .addValue("calories", meal.getCalories());
+        if (meal.isNew()) {
             Number newKey = insertMeal.executeAndReturnKey(map);
             meal.setId(newKey.intValue());
-        }else if(namedParameterJdbcTemplate.update("update meals set description =: description, date_time =: date_time, " +
-                "calories =: calories where user_id =: user_id and id =:id",map)==0){
+        } else if (namedParameterJdbcTemplate.update("update meals set description=:description, date_time=:dateTime, " +
+                "calories=:calories where user_id=:userId and id=:id", map) == 0) {
 
             return null;
         }
@@ -52,23 +52,23 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return jdbcTemplate.update("delete from  meals where user_id=? and id =? ", ROW_MAPPER,userId,id) !=0;
+        return jdbcTemplate.update("delete from meals where user_id=? and id =?",  userId, id) != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        List<Meal> meals = jdbcTemplate.query("select * from meals where user_id =? and id = ?", ROW_MAPPER,userId,id);
+        List<Meal> meals = jdbcTemplate.query("select * from meals where user_id =? and id = ?", ROW_MAPPER, userId, id);
         return DataAccessUtils.singleResult(meals);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return jdbcTemplate.query("select * from meals where user_id =? order by date_time desc",ROW_MAPPER,userId);
-    
+        return jdbcTemplate.query("select * from meals where user_id =? order by date_time desc", ROW_MAPPER, userId);
+
     }
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        return jdbcTemplate.query("select * from meals where user_id =? and  date_time BETWEEN ? and ? order by date_time desc",ROW_MAPPER,userId, startDate, endDate);
+        return jdbcTemplate.query("select * from meals where user_id =? and  date_time BETWEEN ? and ? order by date_time desc", ROW_MAPPER, userId, startDate, endDate);
     }
 }
