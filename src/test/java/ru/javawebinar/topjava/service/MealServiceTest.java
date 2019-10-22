@@ -69,7 +69,7 @@ public class MealServiceTest {
 
     @Test
     public void create() {
-        Meal newMeal = new Meal( LocalDateTime.of(2019, Month.OCTOBER, 22, 10, 0), "тест еда", 500);
+        Meal newMeal = new Meal(LocalDateTime.of(2019, Month.OCTOBER, 22, 10, 0), "тест еда", 500);
         Meal createdMeal = service.create(newMeal, ADMIN_ID);
         newMeal.setId(createdMeal.getId());
         assertMatch(service.getAll(ADMIN_ID), newMeal, MEAL_8, MEAL_7);
