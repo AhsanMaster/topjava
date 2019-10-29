@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ddf059ed66b34385a51ab1d10f6116db)](https://www.codacy.com/manual/AhsanMaster/topjava?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AhsanMaster/topjava&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://travis-ci.org/AhsanMaster/topjava.svg?branch=master)](https://travis-ci.org/AhsanMaster/topjava)
 
 Java Enterprise Online Project 
