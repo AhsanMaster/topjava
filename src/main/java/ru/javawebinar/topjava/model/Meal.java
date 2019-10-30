@@ -35,12 +35,13 @@ public class Meal extends AbstractBaseEntity {
     @Size(min = 2, max = 100, message = "Description's length from 2 to 150 ")
     private String description;
 
-    @Range(min = 10, max = 10_000, message = "Calories min 10 max 10 000")
     @Column(name = "calories", nullable = false)
+    @Range(min = 10, max = 10_000, message = "Calories min 10 max 10 000")
     private int calories;
 
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     private User user;
 
     public Meal() {
