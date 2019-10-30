@@ -20,6 +20,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.concurrent.TimeUnit;
 
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -32,29 +33,31 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+
     private static StringBuilder stopWatcherLog = new StringBuilder();
     @Autowired
     private MealService service;
 
     @Rule
-    public ExpectedException thrown= ExpectedException.none();
+    public ExpectedException thrown = ExpectedException.none();
 
     //http://qaru.site/questions/799389/record-time-it-takes-junit-tests-to-run
     @Rule
     public Stopwatch sw = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            double seconds = nanos/1_000_000;
-            String methodLog = "Method " + description.getMethodName() + ": "+ seconds + "s";
+            String green = "\u001B[32m";
+            String normal = "\033[0m";
+            String methodLog = String.format(green + "Method:  %15s | time, ms: %d" + normal, description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
             log.info(methodLog);
             stopWatcherLog.append(methodLog).append("\n");
-            super.finished(nanos, description);
         }
     };
 
     @AfterClass
-    public static void afterTests(){
+    public static void afterTests() {
         log.info(stopWatcherLog.toString());
     }
 
@@ -93,13 +96,13 @@ public class MealServiceTest {
 
     @Test
     public void getNotFound() throws Exception {
-        thrown.expect(NoResultException.class);
+        thrown.expect(NotFoundException.class);
         service.get(1, USER_ID);
     }
 
     @Test
     public void getNotOwn() throws Exception {
-        thrown.expect(NoResultException.class);
+        thrown.expect(NotFoundException.class);
         service.get(MEAL1_ID, ADMIN_ID);
     }
 
@@ -112,7 +115,7 @@ public class MealServiceTest {
 
     @Test
     public void updateNotFound() throws Exception {
-        thrown.expect(NoResultException.class);
+        thrown.expect(NotFoundException.class);
         service.update(MEAL1, ADMIN_ID);
     }
 
