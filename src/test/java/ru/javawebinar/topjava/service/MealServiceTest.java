@@ -1,7 +1,14 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -25,9 +32,31 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
-
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+    private static StringBuilder stopWatcherLog = new StringBuilder();
     @Autowired
     private MealService service;
+
+    @Rule
+    public ExpectedException thrown= ExpectedException.none();
+
+    //http://qaru.site/questions/799389/record-time-it-takes-junit-tests-to-run
+    @Rule
+    public Stopwatch sw = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            double seconds = nanos/1_000_000;
+            String methodLog = "Method " + description.getMethodName() + ": "+ seconds + "s";
+            log.info(methodLog);
+            stopWatcherLog.append(methodLog).append("\n");
+            super.finished(nanos, description);
+        }
+    };
+
+    @AfterClass
+    public static void afterTests(){
+        log.info(stopWatcherLog.toString());
+    }
 
     @Test
     public void delete() throws Exception {
@@ -35,13 +64,15 @@ public class MealServiceTest {
         assertMatch(service.getAll(USER_ID), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.delete(1, USER_ID);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteNotOwn() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.delete(MEAL1_ID, ADMIN_ID);
     }
 
@@ -60,13 +91,15 @@ public class MealServiceTest {
         assertMatch(actual, ADMIN_MEAL1);
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void getNotFound() throws Exception {
+        thrown.expect(NoResultException.class);
         service.get(1, USER_ID);
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void getNotOwn() throws Exception {
+        thrown.expect(NoResultException.class);
         service.get(MEAL1_ID, ADMIN_ID);
     }
 
@@ -77,8 +110,9 @@ public class MealServiceTest {
         assertMatch(service.get(MEAL1_ID, USER_ID), updated);
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void updateNotFound() throws Exception {
+        thrown.expect(NoResultException.class);
         service.update(MEAL1, ADMIN_ID);
     }
 
